@@ -1,0 +1,2 @@
+# MazeRush
+Python Maze Game
