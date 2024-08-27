@@ -8,9 +8,9 @@ You can currently play up to four players on the same device, however,
 networked multiplayer is in the works
 
 ## How can I play it
-Go to the branches of the project and find the latest version (Currently V1.0) and download the files.
+Go to the [latest releases](https://github.com/ZephCreations/MazeRush/releases/latest) of the project and find the latest version (Currently V1.0) and download the files.
 If you have python installed then you will be able to run the file 
-[main.py](/Main/main.pyw)
+`/Main/main.pyw`
 and play the game, no installation necessary.
 
 In future the game may be available as an executable file,
