@@ -20,7 +20,7 @@ import ColourSchemes
 if __name__ == "__main__":
     # start game
     ColourSchemes.change_scheme(ColourSchemes.Dark())
-    root = RootWindow(_width=500, _height=500, bg="light blue")
+    root = RootWindow(_width=500, _height=500, bg=ColourSchemes.Scheme.bg)
     main_menu = MainMenu(root, width=500, height=500)
 
     root.mainloop()

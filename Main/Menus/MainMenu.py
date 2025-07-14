@@ -2,6 +2,7 @@ import tkinter as tk
 from ColourSchemes import Scheme as Theme
 from .Instructions import InstructionsMenu
 from .LocalMultiplayerOptions import LocalMultiplayerOptions
+from .NetworkMultiplayerOptions import NetworkMultiplayerOptions
 from .SettingsMenu import SettingsMenu
 from .utils import create_menu_button
 from .breadcrumbs import BreadCrumbs
@@ -44,7 +45,7 @@ class MainMenu(tk.Frame):
         create_menu_button(container, "Local Multiplayer",
                            2, self.local_multiplayer)
         create_menu_button(container, "Network Multiplayer",
-                           3, self.network_multiplayer, True)
+                           3, self.network_multiplayer)
         create_menu_button(container, "Instructions",
                            5, self.instructions)
         create_menu_button(container, "Settings",

@@ -50,8 +50,9 @@ class GameScreen(tk.Frame):
     def create_canvas(self):
         self.canvas: tk.Canvas = tk.Canvas(
             self, relief='solid', highlightthickness=4,
-            highlightbackground=Theme.highlight,
-            highlightcolor=Theme.highlight, bg=Theme.maze_bg)
+            highlightbackground=Theme.sec_bg,
+            # highlightcolor=Theme.highlight,
+            bg=Theme.maze_bg)
         self.canvas.pack(side='right', fill='both', expand=True,
                          padx=GameScreen.BORDER_PADDING,
                          pady=GameScreen.BORDER_PADDING)

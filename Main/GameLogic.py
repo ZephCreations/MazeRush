@@ -119,17 +119,37 @@ class Game:
         # self.target.place(2, 2)
         self.target.place_random()
 
+    def create_player(self, colour, number, default_key_binds=False):
+        if default_key_binds:
+            key_binds = self.key_binds[0]
+        else:
+            key_binds = self.key_binds[number]
+        player = Player(self.game_screen.canvas,
+                        colour,
+                        self,
+                        key_binds,
+                        number)
+        self.players.append(player)
+        return player 
+
     def create_players(self):
         colours = ["red", "blue", "green", "orange"]
 
         for player_no in range(0, self.no_players):
-            player = Player(self.game_screen.canvas,
-                            colours[player_no],
-                            self,
-                            self.key_binds[player_no],
-                            player_no)
-            self.players.append(player)
+            self.create_player(colours[player_no], player_no)
+
         # End of function create_players
+
+    def add_player(self, player):
+        player.assign_maze(self.maze)
+        player.draw_player()
+        if self.lobby:
+            size = self.maze_size
+            player.place(int((size[0] - 1) / 2),
+                         int((size[1] - 1) / 2))
+        else:
+            player.place_random()
+        self.bind_keys(player, player.movement_keys)
 
     def add_players(self):
 

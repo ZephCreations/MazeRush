@@ -30,12 +30,12 @@ def create_menu_button(parent, text, row, command=None, disabled=False):
 
 
 def create_menu_title(parent, text):
-    title = tk.Label(parent, text=text, font=('calibri bold', 36),
+    title = tk.Label(parent, text=text, font=(Theme.font_bold, 36),
                      fg=Theme.text, bg=Theme.bg, width=10, pady=20)
     title.pack(side='top', fill='both')
 
 
-def create_label(parent, text, row, side):
+def create_label(parent, text, row, side=tk.CENTER):
     container = tk.Frame(parent, bg=Theme.bg,
                          relief='flat')
     label = tk.Label(container,
@@ -77,3 +77,30 @@ def create_drop_down(parent, text, row, options, default=None):
 
     return str_var
     # End of function create_drop_down
+
+
+def create_input_field(parent, text, row, command=None):
+    container = tk.Frame(parent, bg=Theme.bg,
+                         relief='flat')
+
+    str_var = tk.StringVar(container)
+    str_var.set(text)
+
+    entry = tk.Entry(container,
+                     highlightbackground=Theme.text,
+                     highlightthickness=2,
+                     highlightcolor=Theme.text,
+                     selectbackground=Theme.bg,
+                     selectforeground=Theme.text,
+                     relief='flat',
+                     bg=Theme.button_bg, fg=Theme.text,
+                     textvariable=str_var,
+                     command=command,
+                     # cursor=f'left_tee',
+                     exportselection=0)
+
+    container.grid(row=row, column=1, sticky='nsew', pady=5)
+    entry.pack(side='left', fill='both', expand=True)
+
+    return str_var
+    # End of function create_input_field
