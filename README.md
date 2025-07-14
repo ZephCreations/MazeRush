@@ -1,6 +1,5 @@
 # MazeRush
 
----
 ## What is it?
 MazeRush is a 2D game made entirely in native python with no external libraries. 
 The premise of the game is very simple, be the first to the flag to win. 
