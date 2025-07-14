@@ -2,7 +2,6 @@ import tkinter as tk
 from ColourSchemes import Scheme as Theme
 from .Instructions import InstructionsMenu
 from .LocalMultiplayerOptions import LocalMultiplayerOptions
-from .NetworkMultiplayerOptions import NetworkMultiplayerOptions
 from .SettingsMenu import SettingsMenu
 from .utils import create_menu_button
 from .breadcrumbs import BreadCrumbs
