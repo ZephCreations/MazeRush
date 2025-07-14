@@ -7,7 +7,8 @@ import time
 class Game:
     def __init__(self,
                  game_screen,
-                 has_lobby=False):
+                 has_lobby=False,
+                 address=None):
         self.game_screen = game_screen
         self.lobby = has_lobby
         self.buttons = []

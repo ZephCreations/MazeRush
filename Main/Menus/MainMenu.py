@@ -64,7 +64,9 @@ class MainMenu(tk.Frame):
             self.parent, BreadCrumbs(type(self)))
 
     def network_multiplayer(self):
-        print("Network Multiplayer")
+        self.destroy()
+        NetworkMultiplayerOptions(
+            self.parent, BreadCrumbs(type(self)))
 
     def instructions(self):
         self.destroy()

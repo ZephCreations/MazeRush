@@ -10,7 +10,8 @@ class GameScreen(tk.Frame):
 
     def __init__(self, parent: RootWindow, bread_crumbs,
                  players: int, state,
-                 menu_width=200, lobby=False, *args, **kwargs):
+                 menu_width=200, lobby=False, address=None, server=None,
+                 *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.config(bg=Theme.bg)
         self.pack(side="top", fill="both", expand=True)
@@ -19,6 +20,8 @@ class GameScreen(tk.Frame):
         self.parent = parent
         self.menu_width = menu_width
         self.no_players = players
+        self.address = address
+        self.server = server
         self.player_stats = []
         self.state = state
         self.original_width = self.parent.root.winfo_width()
@@ -38,7 +41,7 @@ class GameScreen(tk.Frame):
         self.create_canvas()
         self.create_side_bar()
 
-        self.game = GameLogic.Game(self, lobby)
+        self.game = GameLogic.Game(self, lobby, address)
 
         self.create_stats_section()
         self.create_back_button()
@@ -125,6 +128,28 @@ class GameScreen(tk.Frame):
         self.timer_display.grid(row=row, column=1, sticky='ew',
                                 padx=8, ipady=4, columnspan=2)
 
+        if self.address is not None:
+            row += 1
+            address_label = tk.Label(stats_frame,
+                                     text=f'Address:',
+                                     anchor='w', bg=Theme.bg, fg=Theme.text)
+            address_label.grid(row=row, column=0, sticky='ew',
+                               columnspan=2, pady=(30,0))
+            address_display = tk.Label(stats_frame,
+                                       text=f'{self.address[0]} ',
+                                       anchor='e', bg=Theme.bg, fg=Theme.text)
+            address_display.grid(row=row, column=2, sticky='ew',
+                                 columnspan=2, pady=(30,0))
+            row += 1
+            port_label = tk.Label(stats_frame,
+                                  text=f'Port:',
+                                  anchor='w', bg=Theme.bg, fg=Theme.text)
+            port_label.grid(row=row, column=0, sticky='ew', columnspan=2)
+            port_display = tk.Label(stats_frame,
+                                    text=f'{self.address[1]} ',
+                                    anchor='e', bg=Theme.bg, fg=Theme.text)
+            port_display.grid(row=row, column=2, sticky='ew', padx=8)
+
     def create_back_button(self):
         button_bd = tk.Frame(self.side_bar_frame,
                              highlightbackground=Theme.button_outline,
@@ -142,6 +167,8 @@ class GameScreen(tk.Frame):
         button.pack(fill='both', expand=True, side='top')
 
     def go_back(self):
+        if self.server is not None:
+            self.server.close_server()
         self.game.quit()
         self.destroy()
         self.parent.root.resizable(True, True)
