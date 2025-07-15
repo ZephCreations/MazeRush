@@ -1,5 +1,6 @@
-
 import logging
+
+LEVEL = logging.DEBUG
 
 
 class CustomFormatter(logging.Formatter):
@@ -29,14 +30,14 @@ class CustomFormatter(logging.Formatter):
 
 # create console handler with a higher log level
 ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
+ch.setLevel(LEVEL)
 
 ch.setFormatter(CustomFormatter())
 
 
 def create_logger(name):
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(LEVEL)
     logger.addHandler(ch)
     return logger
 
