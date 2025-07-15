@@ -39,3 +39,6 @@ class ActionMap:
         self.active = True
         for action in self.__actions:
             action.enable_action()
+
+    def __repr__(self):
+        return self.name

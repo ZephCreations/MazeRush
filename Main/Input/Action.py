@@ -39,3 +39,6 @@ class Action:
         for binding in self.__bindings:
             binding.enable_binding()
 
+    def __repr__(self):
+        return f"{self.name}  {self.__bindings}"
+

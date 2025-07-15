@@ -1,5 +1,7 @@
 import tkinter as tk
 from ColourSchemes import Scheme as Theme
+from Input import InputController, ActionMap, Action, KeyboardBindings
+from Settings import Settings
 from .Instructions import InstructionsMenu
 from .LocalMultiplayerOptions import LocalMultiplayerOptions
 from .SettingsMenu import SettingsMenu
@@ -15,6 +17,8 @@ class MainMenu(tk.Frame):
         self.config(bg=Theme.bg)
         self.parent = parent
         self.pack(side="top", fill="both", expand=True)
+
+        self.add_inputs()
 
         self.create_widgets()
 
@@ -72,6 +76,44 @@ class MainMenu(tk.Frame):
     def settings(self):
         self.destroy()
         SettingsMenu(self.parent, BreadCrumbs(type(self)))
+
+    def add_inputs(self):
+        controller = InputController()
+        all_bindings = [Settings.PLAYER_1_BINDINGS,
+                        Settings.PLAYER_2_BINDINGS,
+                        Settings.PLAYER_3_BINDINGS,
+                        Settings.PLAYER_4_BINDINGS]
+
+        # Action maps (for each player)
+        for player_no in range(1, 4 + 1):
+            # Create action map
+            action_map = ActionMap(f"Player_{player_no}")
+
+            actions = ["Move_Up", "Move_Left", "Move_Down", "Move_Right"]
+
+            # Create actions
+            for action_name in actions:
+
+                action = Action(action_name)
+                action.onAction.add_listener(lambda *args, no=player_no: self.on_move(no, *args))
+
+                # Add bindings
+                bindings = all_bindings[player_no-1]
+                binding = KeyboardBindings(self.parent.root, bindings[actions.index(action_name)])
+                action.add_binding(binding)
+
+                if len(bindings) > 4:
+                    binding = KeyboardBindings(self.parent.root, bindings[actions.index(action_name) + 4])
+                    action.add_binding(binding)
+
+                action_map.add_action(action)
+
+            action_map.disable_map()
+
+            controller.add_map(action_map)
+
+    def on_move(self, player, *args):
+        print(player, *args)
 
     def quit(self):
         self.parent.root.destroy()
