@@ -25,7 +25,7 @@ class ActionMap:
                 logger.warning("Action does not exist")
                 return None
 
-    def remove_binding(self, action: Action):
+    def remove_action(self, action: Action):
         if action not in self.__actions:
             return
         self.__actions.remove(action)
