@@ -20,7 +20,7 @@ class InputController:
 
     def add_map(self, action_map: ActionMap):
         if any(action_map.name == _action_map.name for _action_map in self._action_maps):
-            logger.warning("Action Map name already exists")
+            logger.warning(f"Action Map {action_map.name} already exists")
             return
         self._action_maps.append(action_map)
 
@@ -28,13 +28,17 @@ class InputController:
         for action_map in self._action_maps:
             if action_map.name == name:
                 return action_map
-            else:
-                logger.warning("Action Map does not exist")
-                return None
+        # No matching action maps found
+        logger.warning(f"Action Map '{name}' does not exist")
+        return None
 
     def remove_map(self, action_map: ActionMap):
         if action_map not in self._action_maps: return
         self._action_maps.remove(action_map)
+
+    def disable_all(self):
+        for action_map in self._action_maps:
+            action_map.disable_map()
 
 
 if __name__ == "__main__":
