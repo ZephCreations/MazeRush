@@ -1,4 +1,7 @@
 from Action import Action
+from Logging import create_logger
+
+logger = create_logger("ACTION_MAP")
 
 
 class ActionMap:
@@ -9,16 +12,18 @@ class ActionMap:
         self.__actions = []
 
     def add_action(self, action: Action):
-        if action in self.__actions:
+        if any(action.name == _action.name for _action in self.__actions):
+            logger.warning("Action Map name already exists")
             return
         self.__actions.append(action)
 
-    def get_action(self, name):
+    def get_action(self, name) -> Action | None:
         for action in self.__actions:
             if action.name == name:
                 return action
             else:
-                raise RuntimeError("Action does not exist")
+                logger.warning("Action does not exist")
+                return None
 
     def remove_binding(self, action: Action):
         if action not in self.__actions:
@@ -34,6 +39,3 @@ class ActionMap:
         self.active = True
         for action in self.__actions:
             action.enable_action()
-
-
-

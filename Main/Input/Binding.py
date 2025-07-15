@@ -1,4 +1,7 @@
 from Events import Event
+from Logging import create_logger
+
+logger = create_logger("BINDINGS")
 
 
 class Binding:
@@ -6,7 +9,7 @@ class Binding:
     def __init__(self):
         self.trigger_event : Event = Event()
         self.__active = True
-        print("Binding added")
+        logger.debug("Binding added")
 
     def _trigger(self, *args):
         if self.__active:
