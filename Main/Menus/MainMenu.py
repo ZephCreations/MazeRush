@@ -2,6 +2,7 @@ import tkinter as tk
 from ColourSchemes import Scheme as Theme
 from Input import InputController, ActionMap, Action, KeyboardBindings
 from Settings import Settings
+from Logging import create_logger
 from .Instructions import InstructionsMenu
 from .LocalMultiplayerOptions import LocalMultiplayerOptions
 from .SettingsMenu import SettingsMenu
@@ -9,6 +10,7 @@ from .utils import create_menu_button
 from .breadcrumbs import BreadCrumbs
 
 MENU_TITLE_TEXT = "Menu"
+logger = create_logger("MAIN_MENU")
 
 
 class MainMenu(tk.Frame):
@@ -18,7 +20,8 @@ class MainMenu(tk.Frame):
         self.parent = parent
         self.pack(side="top", fill="both", expand=True)
 
-        self.add_inputs()
+        if InputController().get_map("Player_1") is None:
+            self.add_inputs()
 
         self.create_widgets()
 
@@ -95,7 +98,6 @@ class MainMenu(tk.Frame):
             for action_name in actions:
 
                 action = Action(action_name)
-                action.onAction.add_listener(lambda *args, no=player_no: self.on_move(no, *args))
 
                 # Add bindings
                 bindings = all_bindings[player_no-1]
@@ -111,9 +113,7 @@ class MainMenu(tk.Frame):
             action_map.disable_map()
 
             controller.add_map(action_map)
-
-    def on_move(self, player, *args):
-        print(player, *args)
+            logger.info(InputController().get_map(action_map.name).debug_display())
 
     def quit(self):
         self.parent.root.destroy()
