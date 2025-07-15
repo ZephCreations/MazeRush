@@ -1,4 +1,4 @@
-from Action import Action
+from .Action import Action
 from Logging import create_logger
 
 logger = create_logger("ACTION_MAP")

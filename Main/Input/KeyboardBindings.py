@@ -1,4 +1,4 @@
-from Binding import Binding
+from .Binding import Binding
 import tkinter as tk
 
 

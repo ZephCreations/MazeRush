@@ -1,4 +1,4 @@
-from ActionMap import ActionMap
+from .ActionMap import ActionMap
 from Logging import create_logger
 
 logger = create_logger("INPUT_CONTROLLER")

@@ -1,5 +1,5 @@
 from Events import Event
-from Binding import Binding
+from .Binding import Binding
 from Logging import create_logger
 
 logger = create_logger("BINDINGS")
