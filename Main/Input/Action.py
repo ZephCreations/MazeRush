@@ -27,7 +27,8 @@ class Action:
         binding.trigger_event.remove_listener(self.__trigger)
 
     def __trigger(self, *args):
-        self.onAction.trigger(self.name, *args)
+        # self.onAction.trigger(self.name, *args)
+        self.onAction.trigger(*args)
 
     def disable_action(self):
         self.active = False

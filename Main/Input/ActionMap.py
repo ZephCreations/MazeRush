@@ -13,7 +13,7 @@ class ActionMap:
 
     def add_action(self, action: Action):
         if any(action.name == _action.name for _action in self.__actions):
-            logger.warning("Action Map name already exists")
+            logger.warning(f"Action '{action.name}' already exists")
             return
         self.__actions.append(action)
 
@@ -21,9 +21,9 @@ class ActionMap:
         for action in self.__actions:
             if action.name == name:
                 return action
-            else:
-                logger.warning("Action does not exist")
-                return None
+        # No matching actions found
+        logger.warning(f"Action '{name}' does not exist")
+        return None
 
     def remove_action(self, action: Action):
         if action not in self.__actions:
@@ -39,6 +39,9 @@ class ActionMap:
         self.active = True
         for action in self.__actions:
             action.enable_action()
+
+    def debug_display(self):
+        return str(self.__actions)
 
     def __repr__(self):
         return self.name
