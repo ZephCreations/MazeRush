@@ -11,15 +11,11 @@ class Player:
 
     def __init__(self, canvas: tk.Canvas,
                  color='black', game=None,
-                 movement_keys=None, player_no=0):
+                 player_no=0):
         self.canvas = canvas
         self.maze = None
         self.color = color
         self.game = game
-        if movement_keys is None:
-            movement_keys = ['W', 'A', 'S', 'D',
-                             'w', 'a', 's', 'd']
-        self.movement_keys = movement_keys
         self.size = 0
         self.player_no = player_no
 

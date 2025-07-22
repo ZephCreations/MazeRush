@@ -1,6 +1,7 @@
 from Settings import Settings
 from GameClasses import Maze, Player, Target, Button, Text
 from ColourSchemes import Scheme as Theme
+from Input import InputController
 import time
 
 
@@ -17,10 +18,6 @@ class Game:
         self.maze_size = Settings.DEFAULT_MAZE_SIZE
         self.no_players = self.game_screen.no_players
         self.players: [Player] = []
-        self.key_binds = [["W", "A", "S", "D", "w", "a", "s", "d"],
-                          ["<Up>", "<Left>", "<Down>", "<Right>"],
-                          ["I", "J", "K", "L", "i", "j", "k", "l"],
-                          ["T", "F", "G", "H", "t", "f", "g", "h"]]
         self.exiting = False
         self.timer_running = False
 
@@ -119,17 +116,24 @@ class Game:
         # self.target.place(2, 2)
         self.target.place_random()
 
-    def create_player(self, colour, number, default_key_binds=False):
-        if default_key_binds:
-            key_binds = self.key_binds[0]
-        else:
-            key_binds = self.key_binds[number]
+    def create_player(self, colour, number):
+        # if default_key_binds:
+        #     key_binds = self.key_binds[0]
+        # else:
+        #     key_binds = self.key_binds[number]
         player = Player(self.game_screen.canvas,
                         colour,
                         self,
-                        key_binds,
                         number)
         self.players.append(player)
+
+        # Add event listeners for movement
+        action_map = InputController().get_map(f"Player_{number+1}")
+        action_map.get_action("Move_Left").onAction.add_listener(player.move_left)
+        action_map.get_action("Move_Right").onAction.add_listener(player.move_right)
+        action_map.get_action("Move_Up").onAction.add_listener(player.move_up)
+        action_map.get_action("Move_Down").onAction.add_listener(player.move_down)
+
         return player 
 
     def create_players(self):
@@ -149,7 +153,11 @@ class Game:
                          int((size[1] - 1) / 2))
         else:
             player.place_random()
-        self.bind_keys(player, player.movement_keys)
+
+        # Enable key binds
+        InputController().get_map(f"Player_{player.player_no}").enable_map()
+
+        # self.bind_keys(player, player.movement_keys)
 
     def add_players(self):
 
@@ -162,7 +170,8 @@ class Game:
                              int((size[1] - 1) / 2))
             else:
                 player.place_random()
-            self.bind_keys(player, player.movement_keys)
+            InputController().get_map(f"Player_{player.player_no + 1}").enable_map()
+            # self.bind_keys(player, player.movement_keys)
         # End of function add_players
 
     def add_buttons(self):
@@ -339,7 +348,8 @@ class Game:
     def win_process(self, player: Player):
         if not self.exiting:
             self.timer_running = False
-            self.unbind_all_keys()
+            InputController().disable_all()
+            # self.unbind_all_keys()
             root = self.game_screen.parent.root
 
             # Check if all points are achieved
@@ -441,4 +451,5 @@ class Game:
         # End function reset_game
 
     def quit(self):
+        InputController().disable_all()
         self.exiting = True
