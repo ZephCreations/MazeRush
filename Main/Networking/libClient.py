@@ -4,8 +4,6 @@ import json
 import io
 import struct
 
-from Events import player_joined
-
 from Logging import create_logger
 logger = create_logger("CLIENT")
 

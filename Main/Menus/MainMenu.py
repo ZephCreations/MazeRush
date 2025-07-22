@@ -4,6 +4,7 @@ from Input import InputController, ActionMap, Action, KeyboardBindings
 from Settings import Settings
 from Logging import create_logger
 from .Instructions import InstructionsMenu
+from .NetworkMultiplayerOptions import NetworkMultiplayerOptions
 from .LocalMultiplayerOptions import LocalMultiplayerOptions
 from .SettingsMenu import SettingsMenu
 from .utils import create_menu_button
