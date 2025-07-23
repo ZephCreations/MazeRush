@@ -295,36 +295,6 @@ class Game:
             self.lobby = False
             self.start_game()
 
-    def bind_keys(self, player, keys: list):
-        # print(f"Player: {player.color}\n Keys: {keys}")
-        root = self.game_screen.parent.root
-        root.bind(keys[0], lambda event: player.move_up(event))
-        root.bind(keys[1], lambda event: player.move_left(event))
-        root.bind(keys[2], lambda event: player.move_down(event))
-        root.bind(keys[3], lambda event: player.move_right(event))
-        if len(keys) > 4:
-            root.bind(keys[4], lambda event: player.move_up(event))
-            root.bind(keys[5], lambda event: player.move_left(event))
-            root.bind(keys[6], lambda event: player.move_down(event))
-            root.bind(keys[7], lambda event: player.move_right(event))
-        # End of function bind_keys
-
-    def unbind_all_keys(self):
-        root = self.game_screen.parent.root
-        for player_no in range(0, self.no_players):
-            keys = self.key_binds[player_no]
-            root.unbind(keys[0])
-            root.unbind(keys[1])
-            root.unbind(keys[2])
-            root.unbind(keys[3])
-            if len(keys) > 4:
-                root.unbind(keys[4])
-                root.unbind(keys[5])
-                root.unbind(keys[6])
-                root.unbind(keys[7])
-
-        # End of function unbind_all_keys
-
     def player_moved(self, player):
         # Update player position with server if needed
         if not self.lobby:
