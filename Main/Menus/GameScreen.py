@@ -26,21 +26,23 @@ class GameScreen(tk.Frame):
 
         self.canvas: tk.Canvas = ...
         self.timer_display = None
-        self.timer_val = 0.0000
 
         self.side_bar_frame = None
-        self.canvas_width = None
-        self.canvas_height = None
+        self.stats_frame = None
 
         self.parent.root.state('zoomed')
         self.parent.root.resizable(False, False)
 
         self.create_canvas()
         self.create_side_bar()
-
-        self.game = GameLogic.Game(self, lobby)
-
         self.create_stats_section()
+
+
+        self.game = GameLogic.Game(self.canvas, players, self.parent.root,
+                                   self.timer_display, GameScreen.BORDER_PADDING, lobby)
+
+        self.add_player_stats()
+
         self.create_back_button()
 
         self.game.start_game()
@@ -48,7 +50,7 @@ class GameScreen(tk.Frame):
         # End of __init__
 
     def create_canvas(self):
-        self.canvas: tk.Canvas = tk.Canvas(
+        self.canvas = tk.Canvas(
             self, relief='solid', highlightthickness=4,
             highlightbackground=Theme.sec_bg,
             # highlightcolor=Theme.highlight,
@@ -57,10 +59,9 @@ class GameScreen(tk.Frame):
                          padx=GameScreen.BORDER_PADDING,
                          pady=GameScreen.BORDER_PADDING)
 
+        # self.canvas = Canvas(canvas)
         self.update()
         self.update_idletasks()
-        self.canvas_width = self.canvas.winfo_width()
-        self.canvas_height = self.canvas.winfo_height()
 
     def create_side_bar(self):
         self.side_bar_frame = tk.Frame(self, bg=Theme.bg,
@@ -79,51 +80,54 @@ class GameScreen(tk.Frame):
 
     def create_stats_section(self):
         row = 0
-        stats_frame = tk.Frame(self.side_bar_frame,
+        self.stats_frame = tk.Frame(self.side_bar_frame,
                                highlightbackground=Theme.highlight,
                                highlightthickness=4,
                                bg=Theme.bg)
-        stats_frame.pack(side='top', fill='x', padx=12)
-        stats_frame.columnconfigure(0, weight=1)
-        stats_frame.columnconfigure(1, weight=1)
-        stats_frame.columnconfigure(2, weight=1)
+        self.stats_frame.pack(side='top', fill='x', padx=12)
+        self.stats_frame.columnconfigure(0, weight=1)
+        self.stats_frame.columnconfigure(1, weight=1)
+        self.stats_frame.columnconfigure(2, weight=1)
 
-        stats_title = tk.Label(stats_frame, text="Stats",
+        stats_title = tk.Label(self.stats_frame, text="Stats",
                                font=(Theme.font_bold, 18),
                                bg=Theme.bg, fg=Theme.text)
         stats_title.grid(row=row, column=0, columnspan=3,
                          sticky='nsew')
-        row += 1
+
+        row = 1 + self.no_players * 2
+        timer_label = tk.Label(self.stats_frame, text='Time:', anchor='w',
+                               bg=Theme.bg, fg=Theme.text)
+        timer_label.grid(row=row, column=0, sticky='ew', columnspan=1)
+        self.timer_display = tk.Label(self.stats_frame, anchor='e',
+                                      text='0.0000',
+                                      bg=Theme.bg, fg=Theme.text)
+        self.timer_display.grid(row=row, column=1, sticky='ew',
+                                padx=8, ipady=4, columnspan=2)
+
+    def add_player_stats(self):
+        row = 1
 
         for player in self.game.players:
-            points_label = tk.Label(stats_frame, text=f'{player.color.title()} Points:',
+            points_label = tk.Label(self.stats_frame, text=f'{player.color.title()} Points:',
                                     anchor='w', bg=Theme.bg, fg=Theme.text)
             points_label.grid(row=row, column=0, sticky='ew', columnspan=2)
-            points_display = tk.Label(stats_frame, text=f'{player.points}',
+            points_display = tk.Label(self.stats_frame, text=f'{player.points}',
                                       anchor='e', bg=Theme.bg, fg=Theme.text)
             points_display.grid(row=row, column=2, sticky='ew', padx=8)
             player.points_display = points_display
             row += 1
 
-            movement_label = tk.Label(stats_frame,
+            movement_label = tk.Label(self.stats_frame,
                                       text=f'{player.color.title()} Movements:',
                                       anchor='w', bg=Theme.bg, fg=Theme.text)
             movement_label.grid(row=row, column=0, sticky='ew', columnspan=2)
-            movement_display = tk.Label(stats_frame,
+            movement_display = tk.Label(self.stats_frame,
                                         text=f'{player.movements}',
                                         anchor='e', bg=Theme.bg, fg=Theme.text)
             movement_display.grid(row=row, column=2, sticky='ew', padx=8)
             player.movements_display = movement_display
             row += 1
-
-        timer_label = tk.Label(stats_frame, text='Time:', anchor='w',
-                               bg=Theme.bg, fg=Theme.text)
-        timer_label.grid(row=row, column=0, sticky='ew', columnspan=1)
-        self.timer_display = tk.Label(stats_frame, anchor='e',
-                                      text=f'{self.timer_val} ',
-                                      bg=Theme.bg, fg=Theme.text)
-        self.timer_display.grid(row=row, column=1, sticky='ew',
-                                padx=8, ipady=4, columnspan=2)
 
     def create_back_button(self):
         button_bd = tk.Frame(self.side_bar_frame,

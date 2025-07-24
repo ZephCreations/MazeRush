@@ -6,27 +6,32 @@ import time
 
 
 class Game:
-    def __init__(self,
-                 game_screen,
-                 has_lobby=False):
-        self.game_screen = game_screen
+
+    def __init__(self, canvas, no_players, root, timer_display, border_padding, has_lobby=False):
+        self.canvas = canvas
+        self.root = root
         self.lobby = has_lobby
+        self.border_padding = border_padding
         self.buttons = []
         self.size_label = self.points_label = None
         self.maze = None
         self.target = None
         self.maze_size = Settings.DEFAULT_MAZE_SIZE
-        self.no_players = self.game_screen.no_players
-        self.players: [Player] = []
+
+        self.no_players = no_players
+        self.players= []
         self.exiting = False
+
+        self.timer_display = timer_display
         self.timer_running = False
+        self.timer_val = 0.0000
 
         self.create_players()
 
     def start_game(self):
         if not self.exiting:
             self.full_reset_game()
-            self.game_screen.canvas.update_idletasks()
+            self.canvas.update_idletasks()
             self.start_new_round(text="New Game:")
         # End of function start_game
 
@@ -48,12 +53,12 @@ class Game:
 
         if self.lobby:
             self.add_buttons()
-            self.game_screen.timer_display.config(
+            self.timer_display.config(
                 text=f'WAITING'
             )
         if not self.lobby:
             self.timer_running = True
-            self.game_screen.parent.root.after(
+            self.root.after(
                 0, lambda val1=time.time(): self.update_timer(val1))
 
     def countdown(self, title="New Game in:"):
@@ -61,7 +66,7 @@ class Game:
             self.display_text(
                 title, Theme.text,
                 offset=(0, -100)))
-        self.game_screen.after(1000,
+        self.root.after(1000,
                                self.display_countdown_number,
                                3, None, None,
                                title_text, title_text_bg)
@@ -82,26 +87,25 @@ class Game:
                     self.display_text(f'{number}', Theme.text,
                                       (Theme.font_bold, 100),
                                       offset=(0, 100)))
-                self.game_screen.canvas.update_idletasks()
-                root = self.game_screen.parent.root
-                root.after(750, self.display_countdown_number,
-                           number - 1, _text, _text_bg,
-                           title, title_bg)
+                self.canvas.update_idletasks()
+                self.root.after(750, self.display_countdown_number,
+                                number - 1, _text, _text_bg,
+                                title, title_bg)
         # End of function display_countdown_timer
 
     def create_maze(self):
-        hor_path_size_ = int((self.game_screen.canvas_width
-                              - self.game_screen.BORDER_PADDING * 10
+        hor_path_size_ = int((self.canvas.winfo_width()
+                              - self.border_padding * 10
                               ) / self.maze_size[0])
-        ver_path_size_ = int((self.game_screen.canvas_height
-                              - self.game_screen.BORDER_PADDING * 10
+        ver_path_size_ = int((self.canvas.winfo_height()
+                              - self.border_padding * 10
                               ) / self.maze_size[1])
 
         path_size = hor_path_size_
         if hor_path_size_ > ver_path_size_:
             path_size = ver_path_size_
 
-        self.maze = Maze(self.game_screen.canvas, path_size,
+        self.maze = Maze(self.canvas, path_size,
                          self.maze_size[0],
                          self.maze_size[1],
                          self.lobby)
@@ -110,7 +114,7 @@ class Game:
         # End of function create_maze
 
     def add_target(self):
-        self.target = Target(self.game_screen.canvas,
+        self.target = Target(self.canvas,
                              self.maze,
                              image="./GameClasses/Flag.gif")
         # self.target.place(2, 2)
@@ -121,7 +125,7 @@ class Game:
         #     key_binds = self.key_binds[0]
         # else:
         #     key_binds = self.key_binds[number]
-        player = Player(self.game_screen.canvas,
+        player = Player(self.canvas,
                         colour,
                         self,
                         number)
@@ -180,61 +184,61 @@ class Game:
         x_center = (self.maze_size[0] - 1) // 2
 
         # Plus Button and Label
-        text_title = Text(self.game_screen.canvas, self.maze,
+        text_title = Text(self.canvas, self.maze,
                           "Maze Size")
         text_title.place(x_pos, y_center - 3)
-        text = Text(self.game_screen.canvas, self.maze,
+        text = Text(self.canvas, self.maze,
                     "+")
         text.place(x_pos, y_center - 2)
-        text = Text(self.game_screen.canvas, self.maze,
+        text = Text(self.canvas, self.maze,
                     "-")
         text.place(x_pos, y_center + 1)
-        self.size_label = Text(self.game_screen.canvas, self.maze,
+        self.size_label = Text(self.canvas, self.maze,
                                f"{Settings.DEFAULT_MAZE_SIZE}")
         self.size_label.place(x_pos - 2, y_center - 1.5)
 
-        button = Button(self.game_screen.canvas, self.maze,
+        button = Button(self.canvas, self.maze,
                         self.player_hit_plus_button)
         button.place(x_pos, y_center - 1)
         button.can_block = True
         self.buttons.append(button)
-        button = Button(self.game_screen.canvas, self.maze,
+        button = Button(self.canvas, self.maze,
                         self.player_hit_minus_button)
         button.place(x_pos, y_center)
         button.can_block = True
         self.buttons.append(button)
 
         # Points to Win Button
-        text_title = Text(self.game_screen.canvas, self.maze,
+        text_title = Text(self.canvas, self.maze,
                           "Points to Win")
         text_title.place(self.maze_size[0] - x_pos - 1, y_center - 3)
-        text = Text(self.game_screen.canvas, self.maze,
+        text = Text(self.canvas, self.maze,
                     "+")
         text.place(self.maze_size[0] - x_pos - 1, y_center - 2)
-        text = Text(self.game_screen.canvas, self.maze,
+        text = Text(self.canvas, self.maze,
                     "-")
         text.place(self.maze_size[0] - x_pos - 1, y_center + 1)
-        self.points_label = Text(self.game_screen.canvas, self.maze,
+        self.points_label = Text(self.canvas, self.maze,
                                f"{Settings.POINTS_TO_WIN}")
         self.points_label.place(self.maze_size[0] - x_pos + 1, y_center - 1.5)
 
-        button = Button(self.game_screen.canvas, self.maze,
+        button = Button(self.canvas, self.maze,
                         self.player_hit_points_plus_button)
         button.place(self.maze_size[0] - x_pos - 1, y_center - 1)
         button.can_block = True
         self.buttons.append(button)
-        button = Button(self.game_screen.canvas, self.maze,
+        button = Button(self.canvas, self.maze,
                         self.player_hit_points_minus_button)
         button.place(self.maze_size[0] - x_pos - 1, y_center)
         button.can_block = True
         self.buttons.append(button)
 
         # Toggle Trail Button
-        toggle = Button(self.game_screen.canvas, self.maze,
+        toggle = Button(self.canvas, self.maze,
                         self.toggle_trail)
         toggle.place(x_center, self.maze_size[1] - x_pos - 1)
         toggle.can_toggle = True
-        text = Text(self.game_screen.canvas, self.maze,
+        text = Text(self.canvas, self.maze,
                     "Toggle Trails")
         text.place(x_center, self.maze_size[1] - x_pos)
         self.buttons.append(toggle)
@@ -243,10 +247,10 @@ class Game:
 
         # Start Button
         # TODO update colour of Start button
-        start_button = Button(self.game_screen.canvas, self.maze,
+        start_button = Button(self.canvas, self.maze,
                               self.start_button_check, 5/3)
         start_button.place(x_center, x_pos)
-        text = Text(self.game_screen.canvas, self.maze,
+        text = Text(self.canvas, self.maze,
                     "~ PLAY ~", 2.5)
         text.place(x_center, x_pos - 2)
         self.buttons.append(start_button)
@@ -320,7 +324,6 @@ class Game:
             self.timer_running = False
             InputController().disable_all()
             # self.unbind_all_keys()
-            root = self.game_screen.parent.root
 
             # Check if all points are achieved
             if player.points >= Settings.POINTS_TO_WIN:
@@ -330,7 +333,7 @@ class Game:
                 win_text, win_text_bg = self.display_text(text,
                                                           player.color)
                 self.lobby = True
-                root.after(4000, lambda: (
+                self.root.after(4000, lambda: (
                     self.clear_text(win_text, win_text_bg),
                     self.start_game()))
             else:
@@ -339,7 +342,7 @@ class Game:
 
                 win_text, win_text_bg = self.display_text(text,
                                                           player.color)
-                root.after(3000, lambda: (
+                self.root.after(3000, lambda: (
                     self.clear_text(win_text, win_text_bg),
                     self.start_new_round()))
 
@@ -351,7 +354,7 @@ class Game:
                      offset=(0, 0)):
         if outline is None:
             outline = Theme.button_outline
-        canvas = self.game_screen.canvas
+        canvas = self.canvas
         canvas_width = canvas.winfo_width()
         canvas_height = canvas.winfo_height()
         center_position = (canvas_width / 2 + offset[0],
@@ -376,19 +379,18 @@ class Game:
     def clear_text(self, *text):
         if not self.exiting:
             for text_object in text:
-                self.game_screen.canvas.delete(text_object)
+                self.canvas.delete(text_object)
         # End of function clear_text
 
     def update_timer(self, start_time):
-        screen = self.game_screen
         if self.timer_running and not self.exiting:
             timer_value = round(time.time() - start_time, 4)
             timer_value = self.convert_time(timer_value)
-            screen.timer_display.config(
+            self.timer_display.config(
                 text=f'{timer_value}'
             )
-            screen.timer_val = timer_value
-            screen.parent.root.after(
+            self.timer_val = timer_value
+            self.root.after(
                 10, lambda var1=start_time: self.update_timer(start_time)
             )
 
@@ -401,13 +403,13 @@ class Game:
         return f"{int(minutes)}:" + "{:.4f}".format(time_value)
 
     def reset_round(self):
-        self.game_screen.timer_val = 00.000
-        self.game_screen.timer_display.config(
-            text=f'{self.game_screen.timer_val}')
+        self.timer_val = 00.000
+        self.timer_display.config(
+            text=f'{self.timer_val}')
         for player in self.players:
             player.reset()
-        self.game_screen.canvas.delete("all")
-        self.game_screen.canvas.update_idletasks()
+        self.canvas.delete("all")
+        self.canvas.update_idletasks()
         self.buttons = []
         if self.lobby:
             self.maze_size = (19, 19)
