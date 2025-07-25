@@ -3,4 +3,4 @@ from .LocalMultiplayerOptions import LocalMultiplayerOptions
 from .MainMenu import MainMenu
 from .RootWindow import RootWindow
 from .SettingsMenu import SettingsMenu
-from .GameScreen import GameScreen
+from .GameMenu import GameMenu

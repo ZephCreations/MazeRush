@@ -5,7 +5,7 @@ from .RootWindow import RootWindow
 import GameLogic
 
 
-class GameScreen(tk.Frame):
+class GameMenu(tk.Frame):
     BORDER_PADDING = 10
 
     def __init__(self, parent: RootWindow, bread_crumbs,
@@ -39,7 +39,7 @@ class GameScreen(tk.Frame):
 
 
         self.game = GameLogic.Game(self.canvas, players, self.parent.root,
-                                   self.timer_display, GameScreen.BORDER_PADDING, lobby)
+                                   self.timer_display, GameMenu.BORDER_PADDING, lobby)
 
         self.add_player_stats()
 
@@ -56,8 +56,8 @@ class GameScreen(tk.Frame):
             # highlightcolor=Theme.highlight,
             bg=Theme.maze_bg)
         self.canvas.pack(side='right', fill='both', expand=True,
-                         padx=GameScreen.BORDER_PADDING,
-                         pady=GameScreen.BORDER_PADDING)
+                         padx=GameMenu.BORDER_PADDING,
+                         pady=GameMenu.BORDER_PADDING)
 
         # self.canvas = Canvas(canvas)
         self.update()
@@ -68,7 +68,7 @@ class GameScreen(tk.Frame):
                                        width=self.menu_width)
         self.side_bar_frame.pack_propagate(False)
         self.side_bar_frame.pack(side='left',
-                                 padx=(GameScreen.BORDER_PADDING, 4),
+                                 padx=(GameMenu.BORDER_PADDING, 4),
                                  fill='both')
 
         title = tk.Label(self.side_bar_frame, text="Menu",
@@ -142,7 +142,7 @@ class GameScreen(tk.Frame):
                            activeforeground=Theme.highlight_text,
                            command=self.go_back)
         button_bd.pack(side='bottom', fill='x',
-                       pady=GameScreen.BORDER_PADDING)
+                       pady=GameMenu.BORDER_PADDING)
         button.pack(fill='both', expand=True, side='top')
 
     def go_back(self):
@@ -163,7 +163,7 @@ if __name__ == "__main__":
     ColourSchemes.change_scheme(ColourSchemes.Dark())
 
     root = RootWindow(_width=500, _height=600, bg="light blue")
-    main_menu = GameScreen(root, None, 2,
-                           root.root.state(), (3, 3))
+    main_menu = GameMenu(root, None, 2,
+                         root.root.state(), (3, 3))
 
     root.mainloop()

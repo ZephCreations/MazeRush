@@ -1,7 +1,7 @@
 import tkinter as tk
 from .utils import create_menu_button, create_menu_title
 from ColourSchemes import Scheme as Theme
-from .GameScreen import GameScreen
+from .GameMenu import GameMenu
 
 MENU_TITLE_TEXT = "Options"
 
@@ -60,7 +60,7 @@ class LocalMultiplayerOptions(tk.Frame):
         state = self.parent.root.state
         self.destroy()
         self.bread_crumbs.add_next(type(self))
-        GameScreen(self.parent, self.bread_crumbs, players, state(), lobby=lobby)
+        GameMenu(self.parent, self.bread_crumbs, players, state(), lobby=lobby)
 
         # End of function start_game
 
