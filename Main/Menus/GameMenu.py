@@ -2,6 +2,7 @@ import tkinter as tk
 
 from ColourSchemes import Scheme as Theme
 from .RootWindow import RootWindow
+from GameClasses import GameWindow
 import GameLogic
 
 
@@ -50,7 +51,7 @@ class GameMenu(tk.Frame):
         # End of __init__
 
     def create_canvas(self):
-        self.canvas = tk.Canvas(
+        self.canvas = GameWindow(
             self, relief='solid', highlightthickness=4,
             highlightbackground=Theme.sec_bg,
             # highlightcolor=Theme.highlight,

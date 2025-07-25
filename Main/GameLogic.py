@@ -63,13 +63,13 @@ class Game:
 
     def countdown(self, title="New Game in:"):
         title_text, title_text_bg = (
-            self.display_text(
+            self.canvas.display_text(
                 title, Theme.text,
                 offset=(0, -100)))
         self.root.after(1000,
-                               self.display_countdown_number,
-                               3, None, None,
-                               title_text, title_text_bg)
+                        self.display_countdown_number,
+                        3, None, None,
+                        title_text, title_text_bg)
         # End of function countdown
 
     def display_countdown_number(self, number,
@@ -84,9 +84,9 @@ class Game:
 
             else:
                 _text, _text_bg = (
-                    self.display_text(f'{number}', Theme.text,
-                                      (Theme.font_bold, 100),
-                                      offset=(0, 100)))
+                    self.canvas.display_text(f'{number}', Theme.text,
+                                             (Theme.font_bold, 100),
+                                             offset=(0, 100)))
                 self.canvas.update_idletasks()
                 self.root.after(750, self.display_countdown_number,
                                 number - 1, _text, _text_bg,
@@ -330,8 +330,7 @@ class Game:
                 # All points are achieved
                 # print(f"{player.color} has gotten all the points")
                 text = f'{player.color} Wins!!!'.title()
-                win_text, win_text_bg = self.display_text(text,
-                                                          player.color)
+                win_text, win_text_bg = self.canvas.display_text(text, player.color)
                 self.lobby = True
                 self.root.after(4000, lambda: (
                     self.clear_text(win_text, win_text_bg),
@@ -340,41 +339,12 @@ class Game:
                 # More points needed
                 text = f'Point for {player.color}!!'.title()
 
-                win_text, win_text_bg = self.display_text(text,
-                                                          player.color)
+                win_text, win_text_bg = self.canvas.display_text(text, player.color)
                 self.root.after(3000, lambda: (
                     self.clear_text(win_text, win_text_bg),
                     self.start_new_round()))
 
         # End of function win_process
-
-    def display_text(self, text, colour,
-                     font=(Theme.font_bold, 56),
-                     outline=None,
-                     offset=(0, 0)):
-        if outline is None:
-            outline = Theme.button_outline
-        canvas = self.canvas
-        canvas_width = canvas.winfo_width()
-        canvas_height = canvas.winfo_height()
-        center_position = (canvas_width / 2 + offset[0],
-                           canvas_height / 2 + offset[1])
-
-        text = canvas.create_text(center_position,
-                                  text=text, fill=colour,
-                                  font=font, anchor='center')
-        text_bounds = canvas.bbox(text)
-        text_bg = canvas.create_rectangle(
-            text_bounds[0] - 10, text_bounds[1] - 10,
-            text_bounds[2] + 10, text_bounds[3] + 10,
-            fill=Theme.bg, outline=outline, width=1
-        )
-        canvas.tag_raise(text_bg)
-        canvas.tag_raise(text)
-        canvas.update_idletasks()
-
-        return text, text_bg
-        # End of function display_text
 
     def clear_text(self, *text):
         if not self.exiting:
