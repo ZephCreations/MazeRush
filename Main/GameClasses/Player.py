@@ -4,7 +4,7 @@ from random import randrange
 
 from .Maze import Maze
 from Settings import Settings
-
+from Events import Event
 
 class Player:
     """Creates a Player Object"""
@@ -19,13 +19,14 @@ class Player:
         self.size = 0
         self.player_no = player_no
 
+        self.on_move: Event = Event()
+        self.on_point: Event = Event()
+
         self.abs_position = None
         self.maze_pos = None
         self.prev_pos = None
         self.movements = 0
-        self.movements_display = None
         self.points = 0
-        self.points_display = None
         self.object = None
 
     def assign_maze(self, maze: Maze):
@@ -40,6 +41,10 @@ class Player:
                                          fill=self.color,
                                          outline=''))
         # End of function draw_player
+
+    def set_points(self, points):
+        self.points = points
+        self.on_point.trigger(self.points)
 
     def update_position_in_maze(self, display=False):
         x_coord, y_coord = self.maze.position(self.object)
@@ -83,7 +88,6 @@ class Player:
         if not self.game.exiting:
             # print(f"Move: {direction}")
             self.movements += 1
-            self.movements_display.config(text=f'{self.movements}')
             # Update position
             self.update_position_in_maze()
 
@@ -116,13 +120,17 @@ class Player:
 
             self.canvas.tag_raise(self.object)
             # self.canvas.update_idletasks()
+
+            # Trigger move event
+            self.on_move.trigger(self.movements)
             self.game.player_moved(self)
         # End of move function
 
     def check_wall(self, x_check, y_check):
-        # This checks the co-ords between the player
-        # and the check square for wall, returning
-        # None if there isn't a wall.
+        """This checks the co-ords between the player
+        and the check square for wall, returning
+        None if there isn't a wall."""
+
 
         if self.maze_pos[0] < 0 or self.maze_pos[1] < 0:
             return "outside map"
@@ -180,7 +188,7 @@ class Player:
 
     def reset(self):
         self.movements = 0
-        self.movements_display.config(text=f'{self.movements}')
+        self.on_move.trigger(self.movements)
         self.canvas.delete(self.object)
         self.object = None
         self.abs_position = None

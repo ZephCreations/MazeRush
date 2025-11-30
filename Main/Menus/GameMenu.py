@@ -30,6 +30,8 @@ class GameMenu(tk.Frame):
 
         self.side_bar_frame = None
         self.stats_frame = None
+        self.movement_display = None
+        self.points_display = None
 
         self.parent.root.state('zoomed')
         self.parent.root.resizable(False, False)
@@ -127,8 +129,21 @@ class GameMenu(tk.Frame):
                                         text=f'{player.movements}',
                                         anchor='e', bg=Theme.bg, fg=Theme.text)
             movement_display.grid(row=row, column=2, sticky='ew', padx=8)
-            player.movements_display = movement_display
+
+            # Listen for player movements
+            player.on_move.add_listener(
+                lambda points=0, disp=movement_display : (self.update_player_movements(points, disp))
+            )
+            player.on_point.add_listener(
+                lambda points=0, disp=points_display : (self.update_player_points(points, disp))
+            )
             row += 1
+
+    def update_player_movements(self, movements, display: tk.Label):
+        display.config(text=f'{movements}')
+
+    def update_player_points(self, points, display: tk.Label):
+        display.config(text=f'{points}')
 
     def create_back_button(self):
         button_bd = tk.Frame(self.side_bar_frame,
