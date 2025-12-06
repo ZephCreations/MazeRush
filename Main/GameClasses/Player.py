@@ -29,6 +29,15 @@ class Player:
         self.points = 0
         self.object = None
 
+    @property
+    def points(self):
+        return self._points
+
+    @points.setter
+    def points(self, value):
+        self._points = value
+        self.on_point.trigger(self.points)
+
     def assign_maze(self, maze: Maze):
         self.maze = maze
         # Player is by default half the size of maze widths
@@ -41,10 +50,6 @@ class Player:
                                          fill=self.color,
                                          outline=''))
         # End of function draw_player
-
-    def set_points(self, points):
-        self.points = points
-        self.on_point.trigger(self.points)
 
     def update_position_in_maze(self, display=False):
         x_coord, y_coord = self.maze.position(self.object)

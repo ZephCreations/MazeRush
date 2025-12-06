@@ -305,7 +305,7 @@ class Game:
             # Check if at flag
             if (player.maze_pos[0] == self.target.maze_pos[0]
                     and player.maze_pos[1] == self.target.maze_pos[1]):
-                player.set_points(player.points + 1)
+                player.points += 1
                 self.win_process(player)
 
         # Check if at button
@@ -387,7 +387,7 @@ class Game:
         self.reset_round()
 
         for player in self.players:
-            player.set_points(0)
+            player.points = 0
         # End function reset_game
 
     def quit(self):
