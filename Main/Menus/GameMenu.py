@@ -46,10 +46,10 @@ class GameMenu(tk.Frame):
         self.create_stats_section()
 
         self.game = GameLogic.Game(self.canvas, players, self.parent.root, GameMenu.BORDER_PADDING, lobby)
-        self.game.e_round_start.add_listener(self.start_timer)
-        self.game.e_round_end.add_listener(self.pause_timer)
-        self.game.e_new_round.add_listener(self.reset_timer)
-        self.game.e_lobby.add_listener(self.wait_timer)
+        self.game.on_round_start.add_listener(self.start_timer)
+        self.game.on_round_end.add_listener(self.pause_timer)
+        self.game.on_new_round.add_listener(self.reset_timer)
+        self.game.on_start_lobby.add_listener(self.wait_timer)
 
         self.add_player_stats()
 
