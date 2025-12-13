@@ -1,8 +1,9 @@
 import tkinter as tk
+import time
 
 from ColourSchemes import Scheme as Theme
 from .RootWindow import RootWindow
-from GameClasses import GameWindow
+from GameClasses import GameCanvas
 import GameLogic
 
 
@@ -25,8 +26,12 @@ class GameMenu(tk.Frame):
         self.original_width = self.parent.root.winfo_width()
         self.original_height = self.parent.root.winfo_height()
 
+        self.exiting = False
+
         self.canvas: tk.Canvas = ...
         self.timer_display = None
+        self.timer_running = False
+        self.timer_val = 0.0000
 
         self.side_bar_frame = None
         self.stats_frame = None
@@ -40,9 +45,11 @@ class GameMenu(tk.Frame):
         self.create_side_bar()
         self.create_stats_section()
 
-
-        self.game = GameLogic.Game(self.canvas, players, self.parent.root,
-                                   self.timer_display, GameMenu.BORDER_PADDING, lobby)
+        self.game = GameLogic.Game(self.canvas, players, self.parent.root, GameMenu.BORDER_PADDING, lobby)
+        self.game.e_round_start.add_listener(self.start_timer)
+        self.game.e_round_end.add_listener(self.pause_timer)
+        self.game.e_new_round.add_listener(self.reset_timer)
+        self.game.e_lobby.add_listener(self.wait_timer)
 
         self.add_player_stats()
 
@@ -53,7 +60,7 @@ class GameMenu(tk.Frame):
         # End of __init__
 
     def create_canvas(self):
-        self.canvas = GameWindow(
+        self.canvas = GameCanvas(
             self, relief='solid', highlightthickness=4,
             highlightbackground=Theme.sec_bg,
             # highlightcolor=Theme.highlight,
@@ -162,6 +169,7 @@ class GameMenu(tk.Frame):
         button.pack(fill='both', expand=True, side='top')
 
     def go_back(self):
+        self.exiting = True
         self.game.quit()
         self.destroy()
         self.parent.root.resizable(True, True)
@@ -173,6 +181,39 @@ class GameMenu(tk.Frame):
         self.bread_crumbs.previous()(
             self.parent, self.bread_crumbs)
 
+    def start_timer(self):
+        self.timer_running = True
+        self.after(10, self.update_timer, time.time())
+
+    def update_timer(self, start_time):
+        if self.timer_running and not self.exiting:
+            timer_value = round(time.time() - start_time, 4)
+            timer_value = self.convert_time(timer_value)
+            self.timer_display.config(
+                text=f'{timer_value}'
+            )
+            self.timer_val = timer_value
+            self.after(10, self.update_timer, start_time)
+
+    @staticmethod
+    def convert_time(time_value):
+        # Converts time into minutes and seconds
+        minutes = time_value // 60
+        time_value = time_value % 60
+        minutes = minutes % 60
+        return f"{int(minutes)}:" + "{:.4f}".format(time_value)
+
+    def pause_timer(self):
+        self.timer_running = False
+
+    def reset_timer(self):
+        self.timer_val = 00.000
+        self.timer_display.config(text=f'{self.timer_val}')
+
+    def wait_timer(self):
+        self.timer_display.config(
+            text=f'WAITING'
+        )
 
 if __name__ == "__main__":
     import Main.ColourSchemes as ColourSchemes
@@ -180,6 +221,6 @@ if __name__ == "__main__":
 
     root = RootWindow(_width=500, _height=600, bg="light blue")
     main_menu = GameMenu(root, None, 2,
-                         root.root.state(), (3, 3))
+                         root.root.state())
 
     root.mainloop()

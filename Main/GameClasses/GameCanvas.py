@@ -3,7 +3,7 @@ import tkinter as tk
 from ColourSchemes import Scheme as Theme
 
 
-class GameWindow(tk.Canvas):
+class GameCanvas(tk.Canvas):
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)

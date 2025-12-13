@@ -1,4 +1,5 @@
 from Settings import Settings
+from Events import Event
 from GameClasses import Maze, Player, Target, Button, Text
 from ColourSchemes import Scheme as Theme
 from Input import InputController
@@ -7,7 +8,7 @@ import time
 
 class Game:
 
-    def __init__(self, canvas, no_players, root, timer_display, border_padding, has_lobby=False):
+    def __init__(self, canvas, no_players, root, border_padding, has_lobby=False):
         self.canvas = canvas
         self.root = root
         self.lobby = has_lobby
@@ -22,9 +23,10 @@ class Game:
         self.players= []
         self.exiting = False
 
-        self.timer_display = timer_display
-        self.timer_running = False
-        self.timer_val = 0.0000
+        self.e_new_round: Event = Event()
+        self.e_round_start: Event = Event()
+        self.e_round_end: Event = Event()
+        self.e_lobby: Event = Event()
 
         self.create_players()
 
@@ -53,13 +55,9 @@ class Game:
 
         if self.lobby:
             self.add_buttons()
-            self.timer_display.config(
-                text=f'WAITING'
-            )
+            self.e_lobby.trigger()
         if not self.lobby:
-            self.timer_running = True
-            self.root.after(
-                0, lambda val1=time.time(): self.update_timer(val1))
+            self.e_round_start.trigger()
 
     def countdown(self, title="New Game in:"):
         title_text, title_text_bg = (
@@ -320,9 +318,8 @@ class Game:
 
     def win_process(self, player: Player):
         if not self.exiting:
-            self.timer_running = False
+            self.e_round_end.trigger()
             InputController().disable_all()
-            # self.unbind_all_keys()
 
             # Check if all points are achieved
             if player.points >= Settings.POINTS_TO_WIN:
@@ -351,30 +348,8 @@ class Game:
                 self.canvas.delete(text_object)
         # End of function clear_text
 
-    def update_timer(self, start_time):
-        if self.timer_running and not self.exiting:
-            timer_value = round(time.time() - start_time, 4)
-            timer_value = self.convert_time(timer_value)
-            self.timer_display.config(
-                text=f'{timer_value}'
-            )
-            self.timer_val = timer_value
-            self.root.after(
-                10, lambda var1=start_time: self.update_timer(start_time)
-            )
-
-    @staticmethod
-    def convert_time(time_value):
-        # Converts time into minutes and seconds
-        minutes = time_value // 60
-        time_value = time_value % 60
-        minutes = minutes % 60
-        return f"{int(minutes)}:" + "{:.4f}".format(time_value)
-
     def reset_round(self):
-        self.timer_val = 00.000
-        self.timer_display.config(
-            text=f'{self.timer_val}')
+        self.e_new_round.trigger()
         for player in self.players:
             player.reset()
         self.canvas.delete("all")
