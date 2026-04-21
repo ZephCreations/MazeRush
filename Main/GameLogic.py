@@ -3,20 +3,20 @@ from Events import Event
 from GameClasses import Maze, Player, Target, Button, Text
 from ColourSchemes import Scheme as Theme
 from Input import InputController
-import time
 
 
 class Game:
 
-    def __init__(self, canvas, no_players, root, border_padding, has_lobby=False):
+    def __init__(self, canvas, no_players, root, has_lobby=False):
         self._canvas = canvas
         self.root = root
         self._lobby = has_lobby
-        self._border_padding = border_padding
         self._buttons = []
         self._size_label = self._points_label = None
         self._maze = None
         self._target = None
+        self.hor_padding = None
+        self.ver_padding = None
         self._maze_size = Settings.DEFAULT_MAZE_SIZE
 
         self.no_players = no_players
@@ -92,11 +92,13 @@ class Game:
         # End of function display_countdown_timer
 
     def create_maze(self):
+        self.hor_padding = 2 * int(self._canvas.winfo_width() / self._maze_size[0])
         hor_path_size_ = int((self._canvas.winfo_width()
-                              - self._border_padding * 10
+                              - self.hor_padding
                               ) / self._maze_size[0])
+        self.ver_padding = 2 * int(self._canvas.winfo_height() / self._maze_size[1])
         ver_path_size_ = int((self._canvas.winfo_height()
-                              - self._border_padding * 10
+                              - self.ver_padding * 2
                               ) / self._maze_size[1])
 
         path_size = hor_path_size_

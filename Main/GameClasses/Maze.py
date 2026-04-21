@@ -1,6 +1,5 @@
 from random import shuffle, randrange
 from ColourSchemes import Scheme as Theme
-# from tail_recursion import tail_recursive, recurse
 
 
 class Maze:
@@ -73,23 +72,39 @@ class Maze:
         hor = [[" --"] * self.maze_width + [' ']
                for _ in range(self.maze_height + 1)]
 
-        def walk(x, y):
-            visited[y][x] = 1
+        # Stack for DFS
+        stack = [(randrange(self.maze_width), randrange(self.maze_height))]
+
+        while stack:
+            x, y = stack[-1]
+
+            if not visited[y][x]:
+                visited[y][x] = 1
+
+            # Find neighbours
             d = [(x - 1, y), (x, y + 1), (x + 1, y), (x, y - 1)]
             shuffle(d)
+
+            found_unvisited = False
+
             for (xx, yy) in d:
                 if visited[yy][xx]:
                     continue
+
                 # Remove horizontal wall, turns "-" into " "
                 if xx == x:
                     hor[max(y, yy)][x] = "   "
                 # Remove vertical wall, turns "|" into " "
                 if yy == y:
                     ver[y][max(x, xx)] = "   "
-                walk(xx, yy)
 
-        walk(randrange(self.maze_width),
-             randrange(self.maze_height))
+                # Move to neighbor
+                stack.append((xx, yy))
+                found_unvisited = True
+                break
+
+            if not found_unvisited:
+                stack.pop()
 
         self.horizontal, self.vertical = hor, ver
         # print(hor)

@@ -45,7 +45,7 @@ class GameMenu(tk.Frame):
         self.create_side_bar()
         self.create_stats_section()
 
-        self.game = GameLogic.Game(self.canvas, players, self.parent.root, GameMenu.BORDER_PADDING, lobby)
+        self.game = GameLogic.Game(self.canvas, players, self.parent.root, lobby)
         self.game.on_round_start.add_listener(self.start_timer)
         self.game.on_round_end.add_listener(self.pause_timer)
         self.game.on_new_round.add_listener(self.reset_timer)
@@ -65,9 +65,7 @@ class GameMenu(tk.Frame):
             highlightbackground=Theme.sec_bg,
             # highlightcolor=Theme.highlight,
             bg=Theme.maze_bg)
-        self.canvas.pack(side='right', fill='both', expand=True,
-                         padx=GameMenu.BORDER_PADDING,
-                         pady=GameMenu.BORDER_PADDING)
+        self.canvas.pack(side='right', fill='both', expand=True)
 
         # self.canvas = Canvas(canvas)
         self.update()
